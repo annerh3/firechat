@@ -2,17 +2,20 @@ import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { fireBaseCollection } from "../utils/constants/firebase-collection";
 import { db } from "../config/firebase";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { useAuthStore } from "../store/useAuthStore";
 
 export const useMessages = () => {
     const [messages, setMessages] = useState([]);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const [isMessagesLoading, setIsMessagesLoading] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const messagesEndRef = useRef(null);
     const { user } = useAuthStore();
     useEffect(() => {
+        setIsMessagesLoading(true)
         if (db) {
             const unsubscribe = db
                 .collection(fireBaseCollection.collectionName)
@@ -23,6 +26,7 @@ export const useMessages = () => {
                         ...doc.data(),
                         id: doc.id,
                     }));
+                    setIsMessagesLoading(false)
                     console.log("Mensajes obtenidos:", data);
                     setMessages(data);
                 })
@@ -30,23 +34,6 @@ export const useMessages = () => {
             return unsubscribe;
         }
     }, []);
-
-
-    // Handle form submission
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (inputValue.trim() === "") return;
-
-        const newMessage = {
-            sender: user.name || user.email,
-            avatar: user.photoUrl,
-            message: inputValue,
-            createdDate: firebase.firestore.FieldValue.serverTimestamp(),
-        };
-
-        addNewMessage(newMessage)
-        setInputValue("");
-    };
 
     const addNewMessage = (new_message) => {
         setIsLoading(true)
@@ -64,10 +51,63 @@ export const useMessages = () => {
         });
     };
 
+    // Logica para enviar un nuevo mensaje
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (inputValue.trim() === "") return;
+
+        const newMessage = {
+            sender: user.name || user.email,
+            email: user.email,
+            avatar: user.photoUrl,
+            message: inputValue,
+            isEdited: false,
+            createdDate: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+
+        addNewMessage(newMessage)
+        setInputValue("");
+    };
+
+
     // Handle input change
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
     };
+
+
+    // Logica para editar un Mensaje. Se usa en `EditMessageForm` => src/components/forms/EditMessageForm.jsx
+    const handleEdit = async (messageId, editedMessage) => {
+        try {
+            const mensajeRef = doc(db, "fire-messages", messageId);
+            await updateDoc(mensajeRef, { message: editedMessage, isEdited: true }); // Actualiza el campo "message" y "isEdited"
+            console.log("Mensaje actualizado correctamente");
+        } catch (error) {
+            console.error("Error al actualizar el mensaje:", error);
+        }
+
+    }
+    // Logica para elimar un Mensaje. Se usa en `ThreeDotMenu` =>src\components\ui\ThreeDotMenu.jsx
+    const handleDelete = async (messageId) => {
+        console.log("Eliminando mensaje con ID: ", messageId);
+        try {
+            const mensajeRef = doc(db, "fire-messages", messageId);  // credenciales | nombre-coleccion | idDocumento
+            await deleteDoc(mensajeRef); // Borra el documento
+            console.log("Mensaje eliminado correctamente");
+        } catch (error) {
+            console.error("Error al eliminar el mensaje:", error);
+        }
+    }
+
+    // const eliminarMensaje = async (id) => {
+    //     try {
+    //       const mensajeRef = doc(db, "mensajes", id); // Referencia al documento
+    //       await deleteDoc(mensajeRef); // Borra el documento
+    //       console.log("Mensaje eliminado correctamente");
+    //     } catch (error) {
+    //       console.error("Error al eliminar el mensaje:", error);
+    //     }
+    //   };
 
 
     return {
@@ -75,7 +115,10 @@ export const useMessages = () => {
         messagesEndRef,
         isLoading,
         inputValue,
+        isMessagesLoading,
         handleInputChange,
         handleSubmit,
+        handleEdit,
+        handleDelete,
     }
 }
