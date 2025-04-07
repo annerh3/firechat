@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export const Header = ({ messages }) => {
   const navigate = useNavigate();
-  const { logout, validateAuthentication,  isAuthenticated} = useAuthStore();
+  const { logout, validateAuthentication, isAuthenticated } = useAuthStore();
   const handleLogout = async () => {
     await logout();
     validateAuthentication();
@@ -13,7 +13,7 @@ export const Header = ({ messages }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/');
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
   return (
@@ -28,7 +28,13 @@ export const Header = ({ messages }) => {
           Cerrar Sesión
         </button>
       </div>
-      <div className="cursor-default text-xs text-gray-400">{messages.length} mensajes</div>
+      {messages.length === 0 ? (
+        <div className="h-4 w-[70px] animate-pulse bg-gray-500 rounded-lg"></div>
+      ) : (
+        <div className="cursor-default text-xs text-gray-400">
+          {messages.length} mensajes
+        </div>
+      )}
     </header>
   );
 };
