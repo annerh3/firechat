@@ -6,11 +6,10 @@ import {
   Transition,
 } from "@headlessui/react";
 import { useFloating, shift, flip, autoUpdate } from "@floating-ui/react";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { MoreVertical } from "lucide-react"; // Icono de tres puntos
 import { MdOutlineEditNote, MdOutlineDelete } from "react-icons/md";
 import { useMessageStore } from "../../store/useMessageStore";
-import { useMessages } from "../../hooks/useMessages";
 
 export const ThreeDotMenu = ({className, messageId}) => {
   // Configurar Floating UI para evitar que el menú se corte
@@ -19,18 +18,12 @@ export const ThreeDotMenu = ({className, messageId}) => {
     middleware: [flip(), shift()], // Permite cambiar dirección si no hay espacio
     whileElementsMounted: autoUpdate, // Auto-ajusta el menú si cambia el tamaño de la ventana
   });
-  const { setEditing, setEditingId, editingId, setIsConfirmOpen, setdeleteId } = useMessageStore();
+  const { setEditing, setEditingId, setIsConfirmOpen, setdeleteId } = useMessageStore();
   const handleSubmit = async () => {
     setIsConfirmOpen(true);
     setdeleteId(messageId)
   }
 
-
-  useEffect(() => {
-    console.log("editingId: =>", editingId);
-    
-  }, [editingId])
-  
   return (
     <Menu as="div" className={`relative inline-block text-left ${className}`}>
       <MenuButton

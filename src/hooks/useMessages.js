@@ -27,7 +27,6 @@ export const useMessages = () => {
                         id: doc.id,
                     }));
                     setIsMessagesLoading(false)
-                    console.log("Mensajes obtenidos:", data);
                     setMessages(data);
                 })
 
@@ -44,7 +43,6 @@ export const useMessages = () => {
         }
         db.collection(fireBaseCollection.collectionName).add(new_message).then(() => {
             setIsLoading(false)
-            console.log("Mensaje agregado correctamente");
         }).catch((error) => {
             console.error("Error al agregar mensaje:", error);
             setIsLoading(false)
@@ -81,7 +79,6 @@ export const useMessages = () => {
         try {
             const mensajeRef = doc(db, "fire-messages", messageId);
             await updateDoc(mensajeRef, { message: editedMessage, isEdited: true }); // Actualiza el campo "message" y "isEdited"
-            console.log("Mensaje actualizado correctamente");
         } catch (error) {
             console.error("Error al actualizar el mensaje:", error);
         }
@@ -89,25 +86,13 @@ export const useMessages = () => {
     }
     // Logica para elimar un Mensaje. Se usa en `ThreeDotMenu` =>src\components\ui\ThreeDotMenu.jsx
     const handleDelete = async (messageId) => {
-        console.log("Eliminando mensaje con ID: ", messageId);
         try {
             const mensajeRef = doc(db, "fire-messages", messageId);  // credenciales | nombre-coleccion | idDocumento
             await deleteDoc(mensajeRef); // Borra el documento
-            console.log("Mensaje eliminado correctamente");
         } catch (error) {
             console.error("Error al eliminar el mensaje:", error);
         }
     }
-
-    // const eliminarMensaje = async (id) => {
-    //     try {
-    //       const mensajeRef = doc(db, "mensajes", id); // Referencia al documento
-    //       await deleteDoc(mensajeRef); // Borra el documento
-    //       console.log("Mensaje eliminado correctamente");
-    //     } catch (error) {
-    //       console.error("Error al eliminar el mensaje:", error);
-    //     }
-    //   };
 
 
     return {

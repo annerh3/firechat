@@ -13,7 +13,6 @@ export const Header = ({ messages }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      console.log('Redirigiendo al inicio...');
       navigate('/');
     }
   }, [isAuthenticated, navigate]);

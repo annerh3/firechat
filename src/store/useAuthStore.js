@@ -15,7 +15,6 @@ export const useAuthStore = create((set, get) => ({
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            console.log(user);
             
             //  info necesaria
             const filteredUser = {
@@ -62,7 +61,6 @@ export const useAuthStore = create((set, get) => ({
 
     validateAuthentication: () => {
         const user = localStorage.getItem(userKeyLS);
-        console.log("Usuario obtenido del localStorage",user);
         
         if(!user) return;
         try {

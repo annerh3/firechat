@@ -17,7 +17,6 @@ export const SignInPage = () => {
   // Efecto que redirige cuando el usuario está autenticado
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('Redirigiendo al chat...');
       navigate('/chat');
     }
   }, [isAuthenticated, navigate]);

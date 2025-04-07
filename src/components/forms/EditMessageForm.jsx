@@ -9,6 +9,7 @@ export const EditMessageForm = ({ editValue, messageId }) => {
   const hasChanged = text !== editValue; // Comparacion con el valor original
   const { handleEdit } = useMessages();
   const handleSubmit = (e) => {
+    if (!text.trim()) return; 
     e.preventDefault();
     setEditing(false);
     handleEdit(messageId,text);
@@ -29,11 +30,11 @@ export const EditMessageForm = ({ editValue, messageId }) => {
       <button
         type="submit"
         className={`rounded-md p-1 transition-colors ${
-          hasChanged
+          hasChanged && text.trim() !== "" 
             ? "cursor-pointer bg-amber-600 hover:bg-amber-700"
             : "cursor-not-allowed bg-gray-500"
         }`}
-        disabled={!hasChanged}
+        disabled={!hasChanged || text.trim() === ""}
       >
         <Check />
       </button>
