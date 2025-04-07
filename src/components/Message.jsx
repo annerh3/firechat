@@ -1,7 +1,6 @@
 import { useMessageStore } from "../store/useMessageStore";
 import { formatDate } from "../utils/formatDate";
 import { EditMessageForm } from "./forms/EditMessageForm";
-import { MessageSkeleton } from "./ui/skeletons/MessageSkeleton";
 import { ThreeDotMenu } from "./ui/ThreeDotMenu";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -37,7 +36,7 @@ export const Message = ({ message, isLoading, totalMessages, index }) => {
       key={message.id}
       className={messageContainerClasses}
     >
-      <div className="mt-1 h-8 w-8 overflow-hidden rounded-full border border-gray-800">
+      <div className="mt-1 size-8 overflow-hidden rounded-full border border-gray-800">
         <img
           src={message.avatar}
           onError={(e) => {
